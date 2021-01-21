@@ -1,17 +1,30 @@
 <template>
   <div id="app">
     <div id="nav">
-      <top-header> </top-header>
+      <kapper-header v-if="Role == 'kapper'"></kapper-header>
+      <customer-header v-if="Role == 'klant'"></customer-header>
+      <top-header v-if="Role == '' || Role == null"></top-header>
     </div>
     <router-view />
   </div>
 </template>
 <script>
+import KapperHeader from "@/components/KapperHeader.vue";
+import CustomerHeader from "@/components/CustomerHeader.vue";
 import TopHeader from "@/components/TopHeader.vue";
 export default {
   components: {
-    "top-header": TopHeader,
+    KapperHeader,
+    CustomerHeader,
+    TopHeader,
   },
+  data() {
+    TopHeader;
+    return {
+      Role: localStorage.getItem("userRole"),
+    };
+  },
+  created() {},
 };
 </script>
 <style lang="scss">

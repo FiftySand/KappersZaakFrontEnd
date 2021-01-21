@@ -7,16 +7,16 @@
       <b-row>
         <barbercard
           v-if="activatedCard"
-          :key="activeKapper.id"
-          :name="activeKapper.Name"
-          :age="activeKapper.Age"
+          :key="Kapper.id"
+          :name="Kapper.name"
+          :age="Kapper.age"
           class="animate__animated animate__backInDown animate__delay0.5s mb-2"
         ></barbercard>
         <barbercard v-else style="visibility: hidden; display: block">
         </barbercard>
 
         <b-col>
-          <b-form id="appointmentForm" align-h="end">
+          <b-form @submit="onSubmit" id="appointmentForm" align-h="end">
             <b-form-select
               :options="kappers"
               v-on:change="getSelectedItem"
@@ -25,12 +25,19 @@
 
             <b-form-datepicker
               id="example-datepicker"
-              v-model="value"
+              v-model="appointment.date"
               :min="min"
               :max="max"
               class="mb-5 mt-5"
             ></b-form-datepicker>
-            <b-form-timepicker v-model="value" locale="de"></b-form-timepicker>
+            <b-form-timepicker
+              v-model="appointment.time"
+              locale="de"
+            ></b-form-timepicker>
+
+            <b-button type="submit" variant="primary" class="mt-3"
+              >Login</b-button
+            >
           </b-form>
         </b-col>
       </b-row>
@@ -41,23 +48,52 @@
 <script>
 import axios from "axios";
 
-import kapperCard from "@/components/kapperCard.vue";
+import kapperCardAppointment from "@/components/kapperCardAppointment.vue";
 
 export default {
   components: {
-    barbercard: kapperCard,
+    barbercard: kapperCardAppointment,
   },
   methods: {
     getSelectedItem: function(myarg) {
       // Just a regular js function that takes 1 arg
       this.list.forEach((kapper) => {
         if (kapper.kapper.id == myarg) {
-          (this.activeKapper.id = myarg),
-            (this.activeKapper.Name = kapper.kapper.name),
-            (this.activeKapper.Age = kapper.kapper.age),
+          (this.Kapper.id = myarg),
+            (this.Kapper.name = kapper.kapper.name),
+            (this.Kapper.age = kapper.kapper.age),
             (this.activatedCard = true);
         }
       });
+    },
+    onSubmit(evt) {
+      console.log(evt);
+      evt.preventDefault(),
+        console.log("hier de info"),
+        console.log(this.appointment),
+        console.log(this.Account),
+        console.log(this.Kapper);
+      axios
+        .post("http://localhost:9999/appointment", {
+          account: this.Account,
+          kapper: this.Kapper,
+          date: this.appointment.date,
+          time: this.appointment.time,
+        })
+        .then((response) => {
+          console.log(response);
+          alert(
+            "Afspraak aangemaakt op " +
+              response.data.appointment.date.ge +
+              " om " +
+              response.data.appointment.time +
+              " met " +
+              response.data.appointment.kapper.name
+          );
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
   data() {
@@ -65,20 +101,21 @@ export default {
 
     return {
       appointment: {
-        kapper: "",
-        account: "",
         date: "",
         time: "",
+      },
+      Account: {
+        name: localStorage.getItem("userName"),
       },
       activatedCard: false,
       min: now,
       max: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2),
       list: [],
       kappers: [],
-      activeKapper: {
-        Id: "",
-        Name: "",
-        Age: "",
+      Kapper: {
+        id: "",
+        name: "",
+        age: "",
       },
     };
   },

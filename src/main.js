@@ -12,5 +12,16 @@ Vue.config.productionTip = false;
 new Vue({
   router,
   store,
+  data()
+  {
+    return{
+      Role: localStorage.getItem('userRole'),
+    }
+
+  },
+  mounted()
+  {
+  },
   render: h => h(App)
-}).$mount("#app");
+}).$mount("#app")
+

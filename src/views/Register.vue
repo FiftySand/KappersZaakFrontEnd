@@ -77,7 +77,7 @@ export default {
         Name: "",
         Password: "",
         Email: "",
-        ReceiveEmail: null,
+        ReceiveEmail: false,
       },
       show: true,
     };
@@ -102,7 +102,7 @@ export default {
       this.account.Name = "";
       this.account.Email = "";
       this.account.Password = null;
-      this.account.ReceiveEmail = null;
+      this.account.ReceiveEmail = false;
       // Trick to reset/clear native browser form validation state
       this.show = false;
       this.$nextTick(() => {
